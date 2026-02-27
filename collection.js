@@ -55,7 +55,7 @@ function renderCollection() {
     const favorites = JSON.parse(localStorage.getItem('myCollection')) || [];
 
     if (favorites.length === 0) {
-        grid.innerHTML = '<p id="collection-placeholder">Deine Sammlung ist noch leer. Markiere Rezepte in der Suche mit einem Herz!</p>';
+        grid.innerHTML = '<p id="collection-placeholder">Your collection is still empty. Mark recipes in the search with a heart!</p>';
         return;
     }
 
@@ -97,4 +97,5 @@ function removeFromCollection(id) {
     
     // Seite sofort neu zeichnen
     renderCollection();
+
 }
