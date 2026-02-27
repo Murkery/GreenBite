@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenBite | Find Recipes</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="unterseite.css">
+</head>
+<body>
+    <header id="main-header" class="scrolled">
+        <h2 id="logo-text">GreenBite <span class="greeting">| Recipe Finder</span></h2>
+        <div>
+            <a href="collection.html" class="logout-btn" style="text-decoration: none; margin-right: 10px;">My Collection</a>
+            
+            <a href="index.html" class="logout-btn" style="text-decoration: none; margin-right: 10px;">Home</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <section class="ingredient-section">
+            <h1 class="section-title">What's in your fridge?</h1>
+            <p class="section-subtitle">Select the ingredients you have on hand.</p>
+
+            <div class="search-container">
+            <input type="text" id="ingredient-search" placeholder="Search for ingredients... (e.g. Tomato)">
+            </div>
+
+         <div style="text-align: center; margin-bottom: 15px;">
+             <button id="select-all-btn" class="outline-btn" style="padding: 5px 15px; font-size: 0.9em;">Select All</button>
+        </div>
+
+        <div id="ingredients-grid" class="ingredients-grid">
+        </div>
+
+            <button id="toggle-more-btn" class="outline-btn">Show More Ingredients</button>
+        </section>
+
+        <section class="recipes-section">
+            <h2 class="section-title">Matching Recipes</h2>
+            <div id="recipe-grid" class="recipe-grid">
+                <p id="recipe-placeholder">Select ingredients above to discover delicious meals...</p>
+            </div>
+        </section>
+    </main>
+    <script src="rezepte-daten.js"></script>
+
+    <script src="rezepte.js"></script>
+</body>
+</html>

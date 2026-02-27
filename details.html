@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenBite | Recipe Details</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="unterseite.css">
+</head>
+<body>
+    <header id="main-header" class="scrolled">
+        <h2 id="logo-text">GreenBite <span class="greeting">| Recipe Details</span></h2>
+        <a href="javascript:void(0);" onclick="history.back();" class="logout-btn" style="text-decoration: none;">Back</a>
+    </header>
+
+    <main class="page-content">
+        <div id="recipe-detail-container" class="ingredient-section">
+            <div class="recipe-header">
+                <h1 id="det-name">Load Recipe...</h1>
+                <div id="det-image" class="card-image" style="height: 300px; border-radius: 12px; margin: 20px 0;"></div>
+            </div>
+
+            <div class="servings-selector">
+                <label>Persons:</label>
+                <input type="number" id="servings-input" value="1" min="1" max="10">
+            </div>
+            
+
+            <button class="recipe-view-btn" id="cooked-today-btn" style="margin-top: 20px; background-color: var(--green-accent);">
+                ✔ Cooked Today
+            </button>
+           <div style="visibility: hidden;">
+                <p>-----------------------</p>
+           </div>
+            <div class="recipe-body">
+                <h3>Ingredients:</h3>
+                <ul id="det-ingredients" style="list-style: none; padding: 0;"></ul>
+                
+                <h3 style="margin-top: 30px; margin-bottom : 15px">Instructions:</h3>
+                <ol id="det-instructions" style="padding-left: 20px; color: var(--text-muted);"></ol>
+            </div>
+        </div>
+    </main>
+
+    <script src="rezepte-daten.js"></script>
+    <script>
+        // Logik für die Detailseite
+        const recipeId = localStorage.getItem('selectedRecipeId');
+        const servingsInput = document.getElementById('servings-input');
+
+        // Das richtige Rezept aus dem Array suchen
+        const recipe = recipes.find(r => r.id === recipeId);
+
+        if (recipe) {
+            document.getElementById('det-name').innerText = recipe.name;
+            document.getElementById('det-image').style.backgroundImage = `url('${recipe.image}')`;
+            
+            function renderDetails() {
+                const servings = servingsInput.value || 1;
+                
+                // Zutaten berechnen
+                const ingList = document.getElementById('det-ingredients');
+                ingList.innerHTML = recipe.ingredients.map(ing => `
+                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <b style="color: var(--green-accent);">${(ing.amount * servings).toFixed(1).replace('.0', '')} ${ing.unit}</b> ${ing.name}
+                    </li>
+                `).join('');
+
+                // Anleitung laden
+                const instList = document.getElementById('det-instructions');
+                instList.innerHTML = recipe.instructions.map(step => `
+                    <li style="margin-bottom: 15px;">${step}</li>
+                `).join('');
+            }
+
+            servingsInput.addEventListener('input', renderDetails);
+            renderDetails();
+        } else {
+            document.getElementById('recipe-detail-container').innerHTML = "<h1>Rezept nicht gefunden!</h1>";
+        }
+    </script>
+    <script>document.getElementById('cooked-today-btn').addEventListener('click', function() {
+        // 1. Welches Rezept ist das?
+        const recipeName = document.getElementById('det-name').innerText;
+        
+        // 2. Heutiges Datum als ISO-Key (gleich wie tracker.js!)
+        const today = new Date().toISOString().split('T')[0]; // z.B. "2026-02-27"
+
+        // 3. Den aktuellen Tracker-Speicher laden
+        let trackerData = JSON.parse(localStorage.getItem('greenbite_tracker')) || {};
+
+        // 4. Das Rezept zum heutigen Tag hinzufügen
+        if (!trackerData[today]) {
+            trackerData[today] = [];
+        }
+        trackerData[today].push(recipeName);
+
+        // 5. Alles wieder speichern
+        localStorage.setItem('greenbite_tracker', JSON.stringify(trackerData));
+
+        // --- OPTIK: Feedback für den User ---
+        this.innerText = "Added to Tracker!";
+        this.style.backgroundColor = "#2d6a4f"; // Dunkleres Grün
+        
+        setTimeout(() => {
+            this.innerText = "✔ Cooked Today";
+            this.style.backgroundColor = "var(--green-accent)";
+        }, 2000);
+        });
+    </script>
+</body>
+</html>

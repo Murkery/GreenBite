@@ -1,0 +1,495 @@
+/* --- LAYOUT DER UNTERSEITE --- */
+.page-content {
+    padding: 120px 5% 50px; /* Platz für den fixierten Header oben */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+}
+
+.section-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+/* --- ZUTATEN BEREICH --- */
+.ingredient-section {
+    background: var(--surface-dark);
+    border: 1px solid var(--green-primary);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 40px;
+}
+
+/* Suchleiste */
+.search-container {
+    margin-bottom: 30px;
+}
+
+#ingredient-search {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    background-color: var(--bg-black);
+    border: 1px solid var(--green-primary);
+    border-radius: 8px;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+#ingredient-search:focus {
+    outline: none;
+    border-color: var(--green-accent);
+    box-shadow: 0 0 10px rgba(64, 145, 108, 0.2);
+}
+
+/* Zutaten Grid */
+.ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* --- TOGGLE BUTTONS (Line Pictograms) --- */
+.ingredient-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
+    background: var(--bg-black);
+    border: 1px solid var(--green-primary);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    text-align: center;
+}
+
+/* Verstecke die echte Checkbox */
+.ingredient-label input[type="checkbox"] {
+    display: none;
+}
+
+/* Das SVG Linien-Icon */
+.ingredient-label svg {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 10px;
+    stroke: var(--text-muted); /* Standard-Farbe (Grau) */
+    stroke-width: 1.5;
+    fill: none;
+    transition: all 0.3s ease;
+}
+
+.ingredient-label span {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+/* Hover Effekt */
+.ingredient-label:hover {
+    border-color: var(--green-light);
+}
+
+/* --- AKTIVER ZUSTAND (Wenn Checkbox angehakt ist) --- */
+.ingredient-label input[type="checkbox"]:checked ~ svg {
+    stroke: var(--green-accent); /* Icon wird grün */
+    transform: scale(1.1);
+}
+
+.ingredient-label input[type="checkbox"]:checked ~ span {
+    color: var(--text-main); /* Text wird weiß */
+    font-weight: bold;
+}
+
+.ingredient-label:has(input[type="checkbox"]:checked) {
+    border-color: var(--green-accent);
+    background: rgba(64, 145, 108, 0.1); /* Leichter grüner Hintergrund */
+    box-shadow: 0 4px 15px rgba(64, 145, 108, 0.15);
+}
+
+/* --- BUTTONS & PLATZHALTER --- */
+.outline-btn {
+    display: block;
+    margin: 0 auto;
+    background: transparent;
+    color: var(--green-accent);
+    border: 1px solid var(--green-accent);
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.outline-btn:hover {
+    background: rgba(64, 145, 108, 0.1);
+}
+
+.recipes-section {
+    margin-top: 40px;
+}
+
+#recipe-placeholder {
+    padding: 60px 20px;
+    border: 1px dashed var(--green-primary);
+    border-radius: 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* Hilfsklasse zum Verstecken */
+.hidden {
+    display: none !important;
+}
+
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.recipe-card {
+    background: var(--surface-dark);
+    border: 1px solid var(--green-primary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--green-accent);
+}
+
+.card-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-content h3 {
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.card-meta span {
+    display: inline-flex;  /* Ermöglicht die Ausrichtung von Icon und Text */
+    align-items: center;   /* Zentriert beides vertikal auf einer Linie */
+    gap: 5px;              /* Kleiner Abstand zwischen Icon und Text */
+    margin-right: 15px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.card-meta svg {
+    /* Verhindert, dass das Icon zu groß wird oder springt */
+    display: block; 
+    flex-shrink: 0;
+}
+
+.view-btn {
+    width: 100%;
+    background: var(--green-light);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.view-btn:hover {
+    background: var(--green-accent);
+}
+
+.servings-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--bg-black);
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.servings-selector input {
+    width: 60px;
+    padding: 8px;
+    background: var(--surface-dark);
+    border: 1px solid var(--green-primary);
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#det-instructions li {
+    line-height: 1.6;
+}
+
+.card-image {
+    position: relative;
+}
+
+.fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.fav-btn:hover {
+    transform: scale(1.1);
+}
+
+.fav-btn.active {
+    color: red;
+}
+
+/* Einheitlicher Style für den "Ansehen / Rezept öffnen" Button */
+.recipe-view-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--green-light);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.recipe-view-btn:hover {
+    background: var(--green-accent);
+}
+
+/* Falls du das Herz auch vereinheitlichen willst */
+.fav-btn-dezent {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    border: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+
+.day-number {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.cooked-recipe {
+    font-size: 0.8rem;
+    background: #e0f0e0;
+    padding: 2px 5px;
+    margin-top: 2px;
+    border-radius: 4px;
+}
+
+.hidden { display: none; }
+
+#cooked-today-btn:active {
+    transform: scale(0.95);
+    transition: 0.1s;
+}
+
+/* --- TRACKER SPECIFIC STYLES --- */
+
+.calendar-day {
+    background: var(--surface-dark); /* Dein dunkles Grün-Schwarz */
+    border: 1px solid var(--green-primary); /* Dunkelgrüner Rahmen */
+    padding: 15px;
+    border-radius: 12px;
+    min-height: 120px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Der "Standart-Effekt" passend zum Rest der App */
+.calendar-day:hover {
+    /* Kein weiß! Stattdessen nur eine leichte Aufhellung des Grüns */
+    background: rgba(45, 106, 79, 0.2); 
+    border-color: var(--green-accent); /* Rahmen wird etwas heller */
+    transform: translateY(-2px); /* Minimales Hochlupfen */
+}
+
+.day-title {
+    color: var(--green-accent);
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.cooked-entry {
+    font-size: 0.85rem;
+    background: rgba(27, 67, 50, 0.5); /* Sehr dezentes Dunkelgrün */
+    color: var(--text-main);
+    padding: 6px 10px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border-left: 3px solid var(--green-accent); /* Kleiner Farbakzent links */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-btn {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    padding: 0 5px;
+    transition: color 0.2s;
+}
+
+.delete-btn:hover {
+    color: #ff4d4d; /* Nur das X wird beim Hovern rot */
+}
+
+.recipe-card h3 {
+    /* 1. RESERVIERUNG: Immer Platz für 2 Zeilen (Standard) */
+    min-height: 2.8em; 
+    line-height: 1.4em;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--text-main);
+
+    /* 2. CLAMPING: Abschneiden bei mehr als 2 Zeilen */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* Die magische Zahl für die Zeilen */
+    
+    /* Zukünftiger Standard & Fallback */
+    line-clamp: 2; 
+    overflow: hidden;
+    
+    /* Unterstützung für Wortumbrüche bei sehr langen Wörtern */
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Verhindert das Verschieben der Buttons im Tracker-Menü */
+.button-group {
+    display: flex;
+    flex-direction: row;    /* Buttons nebeneinander */
+    gap: 10px;              /* Abstand zwischen den Buttons */
+    margin-top: 15px;       /* Platz zum Dropdown-Menü */
+}
+
+.button-group button {
+    flex: 1;                /* Beide Buttons werden exakt gleich breit */
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Falls das Add-Menü selbst noch verschoben ist: */
+.add-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.today-highlight {
+    border: 2px solid var(--green-accent) !important;
+    background: rgba(64, 145, 108, 0.1) !important;
+}
+
+.add-btn-mini {
+    background: var(--green-primary);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-top: 10px;
+    float: right;
+}
+
+.cooked-recipe {
+    background: rgba(255,255,255,0.05);
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+/* Der heutige Tag bekommt eine grüne Umrandung */
+.today-border {
+    border: 2px solid var(--green-accent) !important;
+    box-shadow: 0 0 10px rgba(64, 145, 108, 0.3);
+}
+
+/* Der gerade angeklickte Tag wird hervorgehoben */
+.selected-day {
+    background: rgba(64, 145, 108, 0.25) !important;
+    border-color: var(--green-accent) !important;
+}
+
+/* Style für die Einträge im Kalender */
+.tracker-entry {
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 6px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete-x {
+    color: #ff4d4d;
+    cursor: pointer;
+    font-weight: bold;
+    padding-left: 5px;
+}
+
+.nutrition-panel {
+    margin-bottom: 2rem; /* Erzeugt Platz nach unten */
+}
+
+#add-recipe-section:not(.hidden) {
+    margin-top: 3rem;   /* Zusätzlicher Fokus-Abstand, wenn eingeblendet */
+    border-top: 1px solid #333; /* Optionale Trennlinie */
+    padding-top: 2rem;
+}
