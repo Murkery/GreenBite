@@ -6,7 +6,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (session) {
         const meta = session.user.user_metadata;
-        const displayName = meta?.username || session.user.email?.split('@')[0] || 'Chef';
+        const displayName = session.user.is_anonymous
+            ? 'Guest'
+            : (meta?.username || session.user.email?.split('@')[0] || 'Chef');
         showDashboard(displayName);
     } else {
         document.getElementById('auth-section').style.display = 'block';
