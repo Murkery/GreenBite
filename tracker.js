@@ -150,18 +150,31 @@ window.saveToTracker = async function() {
     const name   = select.value;
     if (!selectedDayKey || !name) return;
 
-    // Optimistic UI update
-    if (!trackerData[selectedDayKey]) trackerData[selectedDayKey] = [];
+    const user = await getCurrentUser();
+    if (!user) {
+        alert('Please log in to save meals to your tracker.');
+        return;
+    }
 
-    // Push a placeholder while we wait for Supabase
-    const placeholder = { name, dbId: null };
-    trackerData[selectedDayKey].push(placeholder);
+    // Sofort in Supabase speichern
+    const { data, error } = await supabaseClient
+        .from('tracker')
+        .insert({ user_id: user.id, date: selectedDayKey, recipe_name: name })
+        .select('id')
+        .single();
+
+    if (error) {
+        console.error('Tracker save error:', error);
+        alert('Could not save. Please try again.');
+        return;
+    }
+
+    // Cache aktualisieren
+    if (!trackerData[selectedDayKey]) trackerData[selectedDayKey] = [];
+    trackerData[selectedDayKey].push({ name, dbId: data.id });
+
     closeAddSection();
     renderNutritionAnalysis();
-
-    // Now persist and update the dbId
-    const dbId = await addEntryToSupabase(selectedDayKey, name);
-    placeholder.dbId = dbId;
 };
 
 window.deleteEntry = async function(key, index) {
