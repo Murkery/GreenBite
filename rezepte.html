@@ -12,7 +12,6 @@
         <h2 id="logo-text">GreenBite <span class="greeting">| Recipe Finder</span></h2>
         <div>
             <a href="collection.html" class="logout-btn" style="text-decoration: none; margin-right: 10px;">My Collection</a>
-            
             <a href="index.html" class="logout-btn" style="text-decoration: none; margin-right: 10px;">Home</a>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
@@ -24,15 +23,14 @@
             <p class="section-subtitle">Select the ingredients you have on hand.</p>
 
             <div class="search-container">
-            <input type="text" id="ingredient-search" placeholder="Search for ingredients... (e.g. Tomato)">
+                <input type="text" id="ingredient-search" placeholder="Search for ingredients... (e.g. Tomato)">
             </div>
 
-         <div style="text-align: center; margin-bottom: 15px;">
-             <button id="select-all-btn" class="outline-btn" style="padding: 5px 15px; font-size: 0.9em;">Select All</button>
-        </div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button id="select-all-btn" class="outline-btn" style="padding: 5px 15px; font-size: 0.9em;">Select All</button>
+            </div>
 
-        <div id="ingredients-grid" class="ingredients-grid">
-        </div>
+            <div id="ingredients-grid" class="ingredients-grid"></div>
 
             <button id="toggle-more-btn" class="outline-btn">Show More Ingredients</button>
         </section>
@@ -44,9 +42,12 @@
             </div>
         </section>
     </main>
-    <script src="rezepte-daten.js"></script>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
+    <script src="rezepte-daten.js"></script>
     <script src="rezepte.js"></script>
 </body>
-
 </html>
