@@ -19,7 +19,7 @@
 @media (max-width: 600px) {
 
     /* ── Kein horizontales Überlaufen ── */
-    body        { overflow-x: hidden; }
+    body          { overflow-x: hidden; }
     .page-content { overflow-x: hidden; }
 
     /* ── HEADER ── */
@@ -27,19 +27,31 @@
         padding: 10px 14px;
     }
 
+    /* Basis: Logo-Text nie abschneiden unter 9 Zeichen */
     #main-header.scrolled h2,
     #logo-text {
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 40vw;
-        flex-shrink: 0;
+        max-width: 55vw;   /* genug für "GreenBite | Hello, MaxMuster!" */
+        flex-shrink: 1;
+        min-width: 0;
     }
 
-    /* Subtitle "| My Tracker" etc. ausblenden */
+    /* Unterseiten (tracker/collection/rezepte/details):
+       "| My Tracker" etc. ausblenden — nur dort wo KEIN Name drin ist */
+    #main-header.scrolled .greeting:not(:has(#display-name)) {
+        display: none;
+    }
+
+    /* Fallback für Browser ohne :has() Support:
+       greeting grundsätzlich ausblenden, außer auf index.html (app-section) */
     #main-header.scrolled .greeting {
         display: none;
+    }
+    #app-section #main-header .greeting {
+        display: inline !important;
     }
 
     /* ── NAV: nur Icons, kein Text — außer Logout & Back ── */
@@ -53,7 +65,7 @@
     }
 
     .nav-btn {
-        padding: 8px !important;          /* quadratisch */
+        padding: 8px !important;
         min-width: 36px;
         justify-content: center;
     }
@@ -65,7 +77,7 @@
 
     .main-nav {
         gap: 5px;
-        flex-wrap: nowrap;               /* Icons bleiben in einer Zeile */
+        flex-wrap: nowrap;
     }
 
     /* ── KALENDER PFEILE ── */
