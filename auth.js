@@ -1,26 +1,34 @@
-function validateAuth(username, password, isLoginMode) {
-    const users = JSON.parse(localStorage.getItem('greenbite_users') || '{}');
+// ─────────────────────────────────────────────────────────────
+// AUTH — Supabase version
+// Uses email format: username@greenbite.local (hidden from user)
+// ─────────────────────────────────────────────────────────────
+
+function toEmail(username) {
+    return `${username.trim().toLowerCase()}@greenbite.local`;
+}
+
+async function validateAuth(username, password, isLoginMode) {
+    const email = toEmail(username);
 
     if (isLoginMode) {
-        if (users[username] && users[username] === password) {
-            // ZUERST SPEICHERN
-            localStorage.setItem('isLoggedIn', 'true'); 
-            localStorage.setItem('currentUser', username); 
-            // DANN ERST ERFOLG MELDEN
-            return { success: true };
-        }
-        return { success: false, message: "Falscher Name oder Passwort!" };
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) return { success: false, message: 'Wrong username or password!' };
+        return { success: true, username };
     } else {
-        if (users[username]) {
-            return { success: false, message: "Nutzer existiert bereits!" };
-        }
-        users[username] = password;
-        localStorage.setItem('greenbite_users', JSON.stringify(users));
-        
-        // Auch beim Registrieren direkt einloggen
-        localStorage.setItem('isLoggedIn', 'true'); 
-        localStorage.setItem('currentUser', username); 
-        
-        return { success: true };
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: { data: { username } }   // stored in user_metadata
+        });
+        if (error) return { success: false, message: error.message };
+        // Supabase may require email confirmation — sign in immediately too
+        const { error: signInErr } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (signInErr) return { success: false, message: 'Account created — please log in.' };
+        return { success: true, username };
     }
+}
+
+async function signOutUser() {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'index.html';
 }

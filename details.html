@@ -7,147 +7,121 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Unterseite.css">
     <style>
-        .detail-icon-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: background 0.3s ease, transform 0.1s ease;
-        }
-        .detail-icon-btn:active {
-            transform: scale(0.96);
-        }
-        .detail-icon-btn svg {
-            flex-shrink: 0;
-            transition: fill 0.3s ease, stroke 0.3s ease;
-        }
+        .detail-icon-btn { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; font-weight: 600; transition: background 0.3s ease, transform 0.1s ease; }
+        .detail-icon-btn:active { transform: scale(0.96); }
+        .detail-icon-btn svg { flex-shrink: 0; transition: fill 0.3s ease, stroke 0.3s ease; }
     </style>
 </head>
 <body>
     <header id="main-header" class="scrolled">
         <h2 id="logo-text">GreenBite <span class="greeting">| Recipe Details</span></h2>
-        <a href="javascript:void(0);" onclick="history.back();" class="logout-btn" style="text-decoration: none;">Back</a>
+        <a href="javascript:void(0);" onclick="history.back();" class="logout-btn" style="text-decoration:none;">Back</a>
     </header>
 
     <main class="page-content">
         <div id="recipe-detail-container" class="ingredient-section">
             <div class="recipe-header">
-                <h1 id="det-name">Load Recipe...</h1>
-                <div id="det-image" class="card-image" style="height: 300px; border-radius: 12px; margin: 20px 0;"></div>
+                <h1 id="det-name">Loading Recipe…</h1>
+                <div id="det-image" class="card-image" style="height:300px;border-radius:12px;margin:20px 0;"></div>
             </div>
 
             <div class="servings-selector">
                 <label>Persons:</label>
                 <input type="number" id="servings-input" value="1" min="1" max="10">
             </div>
-            
 
-            <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
-                <button class="recipe-view-btn detail-icon-btn" id="cooked-today-btn" style="background-color: var(--green-accent); flex: 1; min-width: 160px;">
+            <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+                <button class="recipe-view-btn detail-icon-btn" id="cooked-today-btn" style="background-color:var(--green-accent);flex:1;min-width:160px;">
                     <svg id="check-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     <span id="cooked-label">Cooked Today</span>
                 </button>
-                <button class="recipe-view-btn detail-icon-btn" id="save-collection-btn" style="background-color: var(--green-primary); flex: 1; min-width: 160px;">
+                <button class="recipe-view-btn detail-icon-btn" id="save-collection-btn" style="background-color:var(--green-primary);flex:1;min-width:160px;">
                     <svg id="heart-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     <span id="save-label">Save to Collection</span>
                 </button>
             </div>
-           <div style="visibility: hidden;">
-                <p>-----------------------</p>
-           </div>
+
+            <div style="visibility:hidden;"><p>-----------------------</p></div>
+
             <div class="recipe-body">
                 <h3>Ingredients:</h3>
-                <ul id="det-ingredients" style="list-style: none; padding: 0;"></ul>
-                
-                <h3 style="margin-top: 30px; margin-bottom : 15px">Instructions:</h3>
-                <ol id="det-instructions" style="padding-left: 20px; color: var(--text-muted);"></ol>
+                <ul id="det-ingredients" style="list-style:none;padding:0;"></ul>
+                <h3 style="margin-top:30px;margin-bottom:15px">Instructions:</h3>
+                <ol id="det-instructions" style="padding-left:20px;color:var(--text-muted);"></ol>
             </div>
         </div>
     </main>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
     <script src="rezepte-daten.js"></script>
-    <script>
-        // Logik für die Detailseite
-        const recipeId = localStorage.getItem('selectedRecipeId');
-        const servingsInput = document.getElementById('servings-input');
+    <script src="collection.js"></script>
 
-        // Das richtige Rezept aus dem Array suchen
-        const recipe = recipes.find(r => r.id === recipeId);
+    <script>
+        // ── Recipe render ──────────────────────────────────────
+        const recipeId     = localStorage.getItem('selectedRecipeId');
+        const servingsInput = document.getElementById('servings-input');
+        const recipe        = recipes.find(r => r.id === recipeId);
 
         if (recipe) {
             document.getElementById('det-name').innerText = recipe.name;
             document.getElementById('det-image').style.backgroundImage = `url('${recipe.image}')`;
-            
+
             function renderDetails() {
                 const servings = servingsInput.value || 1;
-                
-                // Zutaten berechnen
-                const ingList = document.getElementById('det-ingredients');
-                ingList.innerHTML = recipe.ingredients.map(ing => `
-                    <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <b style="color: var(--green-accent);">${(ing.amount * servings).toFixed(1).replace('.0', '')} ${ing.unit}</b> ${ing.name}
-                    </li>
-                `).join('');
-
-                // Anleitung laden
-                const instList = document.getElementById('det-instructions');
-                instList.innerHTML = recipe.instructions.map(step => `
-                    <li style="margin-bottom: 15px;">${step}</li>
-                `).join('');
+                document.getElementById('det-ingredients').innerHTML = recipe.ingredients.map(ing => `
+                    <li style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
+                        <b style="color:var(--green-accent);">${(ing.amount * servings).toFixed(1).replace('.0','')} ${ing.unit}</b> ${ing.name}
+                    </li>`).join('');
+                document.getElementById('det-instructions').innerHTML = recipe.instructions.map(step => `
+                    <li style="margin-bottom:15px;">${step}</li>`).join('');
             }
 
             servingsInput.addEventListener('input', renderDetails);
             renderDetails();
         } else {
-            document.getElementById('recipe-detail-container').innerHTML = "<h1>Rezept nicht gefunden!</h1>";
+            document.getElementById('recipe-detail-container').innerHTML = '<h1>Recipe not found!</h1>';
         }
-    </script>
-    <script>document.getElementById('cooked-today-btn').addEventListener('click', function() {
-        // 1. Welches Rezept ist das?
-        const recipeName = document.getElementById('det-name').innerText;
-        
-        // 2. Heutiges Datum als ISO-Key (gleich wie tracker.js!)
-        const today = new Date().toISOString().split('T')[0];
 
-        // 3. Den aktuellen Tracker-Speicher laden
-        let trackerData = JSON.parse(localStorage.getItem('greenbite_tracker')) || {};
+        // ── Cooked Today → Supabase tracker ───────────────────
+        document.getElementById('cooked-today-btn').addEventListener('click', async function () {
+            const recipeName = document.getElementById('det-name').innerText;
+            const today      = new Date().toISOString().split('T')[0];
+            const user       = await getCurrentUser();
+            if (!user) return;
 
-        // 4. Das Rezept zum heutigen Tag hinzufügen
-        if (!trackerData[today]) {
-            trackerData[today] = [];
-        }
-        trackerData[today].push(recipeName);
+            const { error } = await supabaseClient
+                .from('tracker')
+                .insert({ user_id: user.id, date: today, recipe_name: recipeName });
 
-        // 5. Alles wieder speichern
-        localStorage.setItem('greenbite_tracker', JSON.stringify(trackerData));
+            if (error) { console.error(error); return; }
 
-        // --- OPTIK: Icon + Text kurz ändern als Feedback ---
-        const checkIcon = document.getElementById('check-icon');
-        const cookedLabel = document.getElementById('cooked-label');
-        const originalPath = checkIcon.innerHTML;
+            // Visual feedback
+            const checkIcon  = document.getElementById('check-icon');
+            const cookedLabel = document.getElementById('cooked-label');
+            const orig        = checkIcon.innerHTML;
 
-        checkIcon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
-        cookedLabel.innerText = 'Added!';
-        this.style.backgroundColor = '#2d6a4f';
+            checkIcon.innerHTML     = '<polyline points="20 6 9 17 4 12"></polyline>';
+            cookedLabel.innerText   = 'Added!';
+            this.style.backgroundColor = '#2d6a4f';
 
-        setTimeout(() => {
-            checkIcon.innerHTML = originalPath;
-            cookedLabel.innerText = 'Cooked Today';
-            this.style.backgroundColor = 'var(--green-accent)';
-        }, 2000);
+            setTimeout(() => {
+                checkIcon.innerHTML     = orig;
+                cookedLabel.innerText   = 'Cooked Today';
+                this.style.backgroundColor = 'var(--green-accent)';
+            }, 2000);
         });
 
-        // Save to Collection logic
-        const saveBtn = document.getElementById('save-collection-btn');
+        // ── Save to Collection → Supabase collection ──────────
+        const saveBtn   = document.getElementById('save-collection-btn');
         const heartIcon = document.getElementById('heart-icon');
         const saveLabel = document.getElementById('save-label');
-        const currentId = localStorage.getItem('selectedRecipeId');
 
-        function updateSaveBtn() {
-            const favorites = JSON.parse(localStorage.getItem('myCollection')) || [];
-            if (favorites.includes(currentId)) {
+        async function updateSaveBtn() {
+            const fav = await isFavorite(recipeId);
+            if (fav) {
                 heartIcon.setAttribute('fill', 'currentColor');
                 heartIcon.setAttribute('stroke', 'currentColor');
                 saveLabel.innerText = 'Saved!';
@@ -160,18 +134,14 @@
             }
         }
 
-        saveBtn.addEventListener('click', function() {
-            let favorites = JSON.parse(localStorage.getItem('myCollection')) || [];
-            if (favorites.includes(currentId)) {
-                favorites = favorites.filter(id => id !== currentId);
-            } else {
-                favorites.push(currentId);
-            }
-            localStorage.setItem('myCollection', JSON.stringify(favorites));
+        saveBtn.addEventListener('click', async function () {
+            await toggleFavorite(recipeId);
             updateSaveBtn();
         });
 
         updateSaveBtn();
+
+        function logout() { signOutUser(); }
     </script>
 </body>
 </html>

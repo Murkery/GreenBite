@@ -1,111 +1,180 @@
-// 1. INITIAL SETUP (Nur einmal deklarieren!)
-const trackerData = JSON.parse(localStorage.getItem('greenbite_tracker')) || {};
-let selectedDayKey = null; 
+// ─────────────────────────────────────────────────────────────
+// TRACKER.JS — Supabase version
+// All meal data lives in the `tracker` table.
+// Local `trackerData` object acts as an in-memory cache.
+// ─────────────────────────────────────────────────────────────
 
-// Zentrale Icon-Konfiguration
+let trackerData    = {};   // { "2025-06-10": ["Recipe A", "Recipe B"] }
+let selectedDayKey = null;
+
+// ── Icon set ────────────────────────────────────────────────
 const icons = {
-    // Deine bestehenden Icons (time, difficulty, etc.) ...
-    analysis: '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 10 1.16 5.07a.5.5 0 0 0 .93.18l1.3-2.1c.19-.3.63-.3.82 0l1.3 2.1a.5.5 0 0 0 .93-.18L20 10"></path><path d="M2 20h20"></path><path d="M5 20c1.05-3.35 2.53-6.64 5.31-9.07a8.43 8.43 0 0 1 5.38-1.93h.31a8.43 8.43 0 0 1 5.38 1.93c2.78 2.43 4.26 5.72 5.31 9.07"></path></svg>', // Sprout
-    alert: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 2 3 10H4l8 10-3-10h5L6 2Z"></path></svg>', // Zap
-    check: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>', // Check-Circle
-    tip: '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>', // Lightbulb
-    trash: '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>' // Trash
+    alert:  '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 2 3 10H4l8 10-3-10h5L6 2Z"></path></svg>',
+    check:  '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+    tip:    '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>',
+    trash:  '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>'
 };
-// Hilfsfunktion: Montag finden
+
+// ── Week helpers ────────────────────────────────────────────
 function getMonday(d) {
     d = new Date(d);
-    const day = d.getDay();
+    const day  = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(d.setDate(diff));
 }
 
 let currentMonday = getMonday(new Date());
 
-// Global verfügbar machen für die Buttons
-window.changeWeek = function(direction) {
-    currentMonday.setDate(currentMonday.getDate() + (direction * 7));
+window.changeWeek = function(dir) {
+    currentMonday.setDate(currentMonday.getDate() + dir * 7);
     initCalendar();
 };
 
+// ─────────────────────────────────────────────────────────────
+// SUPABASE DATA LAYER
+// ─────────────────────────────────────────────────────────────
+
+// Load all tracker rows for the current user into trackerData cache
+async function loadTrackerFromSupabase() {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { data, error } = await supabaseClient
+        .from('tracker')
+        .select('id, date, recipe_name')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+
+    if (error) { console.error('Tracker load error:', error); return; }
+
+    trackerData = {};
+    (data || []).forEach(row => {
+        if (!trackerData[row.date]) trackerData[row.date] = [];
+        // Store as { name, dbId } so we can delete by id
+        trackerData[row.date].push({ name: row.recipe_name, dbId: row.id });
+    });
+}
+
+async function addEntryToSupabase(date, recipeName) {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
+    const { data, error } = await supabaseClient
+        .from('tracker')
+        .insert({ user_id: user.id, date, recipe_name: recipeName })
+        .select('id')
+        .single();
+
+    if (error) { console.error('Tracker insert error:', error); return null; }
+    return data.id;
+}
+
+async function deleteEntryFromSupabase(dbId) {
+    const { error } = await supabaseClient
+        .from('tracker')
+        .delete()
+        .eq('id', dbId);
+
+    if (error) console.error('Tracker delete error:', error);
+}
+
+// ─────────────────────────────────────────────────────────────
+// CALENDAR RENDERING
+// ─────────────────────────────────────────────────────────────
+
 function initCalendar() {
-    const grid = document.getElementById('calendar-grid');
+    const grid        = document.getElementById('calendar-grid');
     const weekDisplay = document.getElementById('current-week-display');
     if (!grid || !weekDisplay) return;
 
     grid.innerHTML = '';
     const daysShort = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr  = new Date().toISOString().split('T')[0];
 
-    // Wochen-Header (Englisch formatieren)
     const lastDay = new Date(currentMonday);
     lastDay.setDate(lastDay.getDate() + 6);
-    weekDisplay.textContent = `${currentMonday.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit'})} - ${lastDay.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit'})}`;
+    weekDisplay.textContent = `${currentMonday.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })} – ${lastDay.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}`;
 
     for (let i = 0; i < 7; i++) {
-        const date = new Date(currentMonday);
+        const date    = new Date(currentMonday);
         date.setDate(date.getDate() + i);
         const dateKey = date.toISOString().split('T')[0];
 
         const dayDiv = document.createElement('div');
         dayDiv.className = 'calendar-day';
-        
-        // Highlight Today & Selected
-        if (dateKey === todayStr) dayDiv.classList.add('today-border');
+        if (dateKey === todayStr)    dayDiv.classList.add('today-border');
         if (dateKey === selectedDayKey) dayDiv.classList.add('selected-day');
 
         dayDiv.innerHTML = `
-            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+            <div style="display:flex;justify-content:space-between;font-weight:bold;">
                 <span>${daysShort[i]}</span>
-                <span style="opacity: 0.5;">${date.getDate()}.${date.getMonth() + 1}.</span>
+                <span style="opacity:0.5;">${date.getDate()}.${date.getMonth() + 1}.</span>
             </div>
-            <div class="day-content" style="margin-top: 10px;">
+            <div class="day-content" style="margin-top:10px;">
                 ${renderDayRecipes(dateKey)}
-            </div>
-        `;
-        
+            </div>`;
+
         dayDiv.onclick = () => openAddSection(dateKey);
         grid.appendChild(dayDiv);
     }
 }
 
 function renderDayRecipes(key) {
-    if (!trackerData[key]) return '';
-    return trackerData[key].map((name, index) => `
-        <div class="tracker-entry" style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.85rem;">${name}</span>
-            <span class="delete-icon" onclick="event.stopPropagation(); deleteEntry('${key}', ${index})" style="cursor: pointer; opacity: 0.6; display: flex; align-items: center;">
+    if (!trackerData[key] || trackerData[key].length === 0) return '';
+    return trackerData[key].map((entry, index) => `
+        <div class="tracker-entry" style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.85rem;">${entry.name}</span>
+            <span class="delete-icon"
+                onclick="event.stopPropagation(); deleteEntry('${key}', ${index})"
+                style="cursor:pointer;opacity:0.6;display:flex;align-items:center;">
                 ${icons.trash}
             </span>
-        </div>
-    `).join('');
+        </div>`).join('');
 }
+
+// ─────────────────────────────────────────────────────────────
+// USER ACTIONS
+// ─────────────────────────────────────────────────────────────
 
 window.openAddSection = function(key) {
     selectedDayKey = key;
-    const dateObj = new Date(key);
+    const dateObj  = new Date(key);
     document.getElementById('selected-day-name').textContent = dateObj.toLocaleDateString('en-GB');
     document.getElementById('add-recipe-section').classList.remove('hidden');
     document.getElementById('add-recipe-section').scrollIntoView({ behavior: 'smooth' });
     initCalendar();
 };
 
-window.saveToTracker = function() {
+window.saveToTracker = async function() {
     const select = document.getElementById('recipe-select');
-    const name = select.value;
+    const name   = select.value;
     if (!selectedDayKey || !name) return;
 
+    // Optimistic UI update
     if (!trackerData[selectedDayKey]) trackerData[selectedDayKey] = [];
-    trackerData[selectedDayKey].push(name);
-    localStorage.setItem('greenbite_tracker', JSON.stringify(trackerData));
+
+    // Push a placeholder while we wait for Supabase
+    const placeholder = { name, dbId: null };
+    trackerData[selectedDayKey].push(placeholder);
     closeAddSection();
     renderNutritionAnalysis();
+
+    // Now persist and update the dbId
+    const dbId = await addEntryToSupabase(selectedDayKey, name);
+    placeholder.dbId = dbId;
 };
 
-window.deleteEntry = function(key, index) {
+window.deleteEntry = async function(key, index) {
+    const entry = trackerData[key]?.[index];
+    if (!entry) return;
+
+    // Optimistic remove
     trackerData[key].splice(index, 1);
-    localStorage.setItem('greenbite_tracker', JSON.stringify(trackerData));
     initCalendar();
     renderNutritionAnalysis();
+
+    // Delete from Supabase
+    if (entry.dbId) await deleteEntryFromSupabase(entry.dbId);
 };
 
 window.closeAddSection = function() {
@@ -115,13 +184,14 @@ window.closeAddSection = function() {
 };
 
 window.logout = function() {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('currentUser');
-    window.location.href = "index.html";
+    signOutUser();
 };
 
-// Start beim Laden
-document.addEventListener('DOMContentLoaded', () => {
+// ─────────────────────────────────────────────────────────────
+// INIT on DOMContentLoaded
+// ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+    // Populate recipe dropdown
     const select = document.getElementById('recipe-select');
     if (typeof recipes !== 'undefined' && select) {
         recipes.forEach(r => {
@@ -130,29 +200,37 @@ document.addEventListener('DOMContentLoaded', () => {
             select.appendChild(opt);
         });
     }
+
+    // Show loading state in nutrition panel
+    const nc = document.getElementById('nutrition-analysis');
+    if (nc) nc.innerHTML = '<div class="nutrition-empty"><p>Loading your data…</p></div>';
+
+    // Load from Supabase, then render
+    await loadTrackerFromSupabase();
     initCalendar();
     renderNutritionAnalysis();
 });
+
 // ─────────────────────────────────────────────────────────────
-// NUTRITION ANALYSIS — TOP 3 DEFICITS
+// NUTRITION ANALYSIS
 // ─────────────────────────────────────────────────────────────
 
 const PER_MEAL_REQUIREMENTS = {
-    kalium:     { label: 'Potassium',   value: 1265,    unit: 'mg' },
-    vitaminC:   { label: 'Vitamin C',   value: 34.5,    unit: 'mg' },
-    eisen:      { label: 'Iron',        value: 4.25,    unit: 'mg' },
-    calcium:    { label: 'Calcium',     value: 330,     unit: 'mg' },
-    phosphor:   { label: 'Phosphorus',  value: 180,     unit: 'mg' },
-    vitaminA:   { label: 'Vitamin A',   value: 0.255,   unit: 'mg' },
-    magnesium:  { label: 'Magnesium',   value: 110,     unit: 'mg' },
-    vitaminB12: { label: 'Vitamin B12', value: 0.0013,  unit: 'mg' },
-    folat:      { label: 'Folate',      value: 100,     unit: 'µg' },
-    vitaminE:   { label: 'Vitamin E',   value: 4,       unit: 'mg' },
-    zink:       { label: 'Zinc',        value: 3.75,    unit: 'mg' },
-    niacin:     { label: 'Niacin',      value: 4.8,     unit: 'mg' },
-    vitaminK1:  { label: 'Vitamin K1',  value: 22.5,    unit: 'µg' },
-    riboflavin: { label: 'Riboflavin',  value: 0.35,    unit: 'mg' },
-    pyridoxin:  { label: 'Vitamin B6',  value: 0.45,    unit: 'mg' },
+    kalium:     { label: 'Potassium',   value: 1265,   unit: 'mg' },
+    vitaminC:   { label: 'Vitamin C',   value: 34.5,   unit: 'mg' },
+    eisen:      { label: 'Iron',        value: 4.25,   unit: 'mg' },
+    calcium:    { label: 'Calcium',     value: 330,    unit: 'mg' },
+    phosphor:   { label: 'Phosphorus',  value: 180,    unit: 'mg' },
+    vitaminA:   { label: 'Vitamin A',   value: 0.255,  unit: 'mg' },
+    magnesium:  { label: 'Magnesium',   value: 110,    unit: 'mg' },
+    vitaminB12: { label: 'Vitamin B12', value: 0.0013, unit: 'mg' },
+    folat:      { label: 'Folate',      value: 100,    unit: 'µg' },
+    vitaminE:   { label: 'Vitamin E',   value: 4,      unit: 'mg' },
+    zink:       { label: 'Zinc',        value: 3.75,   unit: 'mg' },
+    niacin:     { label: 'Niacin',      value: 4.8,    unit: 'mg' },
+    vitaminK1:  { label: 'Vitamin K1',  value: 22.5,   unit: 'µg' },
+    riboflavin: { label: 'Riboflavin',  value: 0.35,   unit: 'mg' },
+    pyridoxin:  { label: 'Vitamin B6',  value: 0.45,   unit: 'mg' },
 };
 
 const RECIPE_HINTS = {
@@ -177,14 +255,13 @@ function renderNutritionAnalysis() {
     const container = document.getElementById('nutrition-analysis');
     if (!container || typeof recipes === 'undefined') return;
 
-    // Collect meals from last 7 days
-    const today = new Date();
+    const today      = new Date();
     const eatenNames = [];
     for (let i = 0; i < 7; i++) {
-        const d = new Date(today);
+        const d   = new Date(today);
         d.setDate(d.getDate() - i);
         const key = d.toISOString().split('T')[0];
-        if (trackerData[key]) trackerData[key].forEach(n => eatenNames.push(n));
+        if (trackerData[key]) trackerData[key].forEach(e => eatenNames.push(e.name));
     }
 
     if (eatenNames.length === 0) {
@@ -194,7 +271,6 @@ function renderNutritionAnalysis() {
         return;
     }
 
-    // Sum micronutrients from tracked recipes
     const totals = {};
     Object.keys(PER_MEAL_REQUIREMENTS).forEach(k => totals[k] = 0);
     eatenNames.forEach(name => {
@@ -205,19 +281,18 @@ function renderNutritionAnalysis() {
         });
     });
 
-    // Compare against full week requirement (7 days × 3 meals × per-meal need)
-    const ranked = Object.keys(PER_MEAL_REQUIREMENTS).map(k => ({
-        key: k,
+    const ranked  = Object.keys(PER_MEAL_REQUIREMENTS).map(k => ({
+        key:   k,
         label: PER_MEAL_REQUIREMENTS[k].label,
-        pct: Math.min(Math.round(totals[k] / (PER_MEAL_REQUIREMENTS[k].value * 21) * 100), 999)
+        pct:   Math.min(Math.round(totals[k] / (PER_MEAL_REQUIREMENTS[k].value * 21) * 100), 999)
     })).sort((a, b) => a.pct - b.pct);
 
-    const deficits = ranked.filter(r => r.pct < 80).slice(0, 3); // TOP 3 ONLY
+    const deficits = ranked.filter(r => r.pct <  80).slice(0, 3);
     const good     = ranked.filter(r => r.pct >= 80);
 
     let html = `
         <div class="nutrition-header">
-            <h3><i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> Weekly Nutrition Check</h3>
+            <h3>${icons.check} Weekly Nutrition Check</h3>
             <p class="nutrition-subtitle">Based on ${eatenNames.length} tracked meal${eatenNames.length !== 1 ? 's' : ''} in the last 7 days</p>
         </div>`;
 

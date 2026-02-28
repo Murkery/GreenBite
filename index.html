@@ -32,26 +32,27 @@
         </p>
     </div>
 
-    
-
     <div id="app-section" style="display: none;">
         <div id="hover-icon-container"></div>
-    <header id="main-header">
-        <h2 id="logo-text">GreenBite <span class="greeting">| Hello, <span id="display-name">Chef</span>!</span></h2>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </header>
+        <header id="main-header">
+            <h2 id="logo-text">GreenBite <span class="greeting">| Hello, <span id="display-name">Chef</span>!</span></h2>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </header>
 
-    <section class="hero-spacer"></section>
+        <section class="hero-spacer"></section>
 
-    <div class="action-menu">
-        <button class="menu-btn">Find Recipes</button>
-        <button class="menu-btn">My Tracking</button>
-        <button class="menu-btn">My Collection</button>
+        <div class="action-menu">
+            <button class="menu-btn">Find Recipes</button>
+            <button class="menu-btn">My Tracking</button>
+            <button class="menu-btn">My Collection</button>
+        </div>
+
+        <main class="content-area"></main>
     </div>
 
-    <main class="content-area"></main>
-</div>
-
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
     <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>

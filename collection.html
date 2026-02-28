@@ -11,38 +11,32 @@
     <header id="main-header" class="scrolled">
         <h2 id="logo-text">GreenBite <span class="greeting">| My Collection</span></h2>
         <div>
-            <a href="rezepte.html" class="logout-btn" style="text-decoration: none; margin-right: 10px;">Find Recipes</a>
-            <a href="index.html" class="logout-btn" style="text-decoration: none; margin-right: 10px;">Home</a>
+            <a href="rezepte.html" class="logout-btn" style="text-decoration:none;margin-right:10px;">Find Recipes</a>
+            <a href="index.html"   class="logout-btn" style="text-decoration:none;margin-right:10px;">Home</a>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </header>
 
     <main class="page-content">
         <section class="recipes-section">
-            <h1 class="section-title">Your favourites</h1>
+            <h1 class="section-title">Your Favourites</h1>
             <p class="section-subtitle">Here you will find all the recipes you have marked with a heart.</p>
             
             <div id="collection-grid" class="recipe-grid">
-                <p id="collection-placeholder">You have not saved any favourites yet.</p>
+                <p id="collection-placeholder">Loading…</p>
             </div>
         </section>
     </main>
-    <script src="rezepte-daten.js"></script> <script src="collection.js"></script>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
     <script src="rezepte-daten.js"></script>
     <script src="collection.js"></script>
     <script>
-        // Logout Funktion (kopiert aus rezepte.js für Konsistenz)
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('currentUser');
-            window.location.href = "index.html";
-        }
-
-        // Funktion zum Ansehen der Details
-        function goToDetail(id) {
-            localStorage.setItem('selectedRecipeId', id);
-            window.location.href = "details.html";
-        }
+        function logout()      { signOutUser(); }
+        function goToDetail(id){ localStorage.setItem('selectedRecipeId', id); window.location.href = 'details.html'; }
     </script>
 </body>
 </html>
