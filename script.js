@@ -218,8 +218,8 @@ window.addEventListener('scroll', () => {
     const header = document.getElementById('main-header');
     const cur = window.scrollY;
     
-    if (cur > 40) header.classList.add('scrolled');
-    else header.classList.remove('scrolled');
+    if (cur > 60) header.classList.add('scrolled');
+    else if (cur < 20) header.classList.remove('scrolled');
 
     if (!isThrottled) {
         if (cur > 80 && cur < window.innerHeight / 2 && cur > lastScrollY) {
@@ -271,5 +271,3 @@ document.querySelectorAll('.menu-btn').forEach(btn => {
         canvas.style.opacity = "0"; // Hintergrund wieder ausblenden
         particles = []; // Partikel leeren für Performance
     });
-
-
