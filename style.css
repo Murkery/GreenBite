@@ -181,7 +181,11 @@ input {
     border: 1px solid var(--green-primary);
     border-radius: 16px;
     cursor: pointer;
-    
+    touch-action: manipulation;  /* Android Chrome: no tap delay */
+    -webkit-tap-highlight-color: rgba(64,145,108,0.2); /* visible tap feedback */
+    position: relative;
+    z-index: 10;
+
     /* Reveal Animation Startzustand */
     opacity: 0;
     transform: translateY(40px); 

@@ -196,7 +196,12 @@ const buttonIcons = {
 
 const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(e => e.isIntersecting ? e.target.classList.add('reveal') : e.target.classList.remove('reveal'));
-}, { threshold: 0.1 });
+}, { threshold: 0 }); // threshold:0 is more reliable on Android Chrome
+
+// Mobile fallback: force reveal after short delay in case observer doesn't fire
+setTimeout(() => {
+    document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.add('reveal'));
+}, 600);
 
 let isThrottled = false;
 let lastScrollY = window.scrollY;

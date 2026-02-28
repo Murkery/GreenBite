@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <canvas id="bg-canvas"></canvas>
+    <canvas id="bg-canvas" style="pointer-events:none;touch-action:none;"></canvas>
 
     <div id="auth-section">
         <h1 id="auth-title">Welcome Back</h1>
@@ -81,7 +81,7 @@
     </div>
 
     <div id="app-section" style="display: none;">
-        <div id="hover-icon-container"></div>
+        <div id="hover-icon-container" style="pointer-events:none;touch-action:none;"></div>
         <header id="main-header">
             <h2 id="logo-text">GreenBite <span class="greeting">| Hello, <span id="display-name">Chef</span>!</span></h2>
             <button class="logout-btn" onclick="logout()">Logout</button>
@@ -90,9 +90,9 @@
         <section class="hero-spacer"></section>
 
         <div class="action-menu">
-            <button class="menu-btn">Find Recipes</button>
-            <button class="menu-btn">My Tracking</button>
-            <button class="menu-btn">My Collection</button>
+            <button class="menu-btn" style="touch-action:manipulation;">Find Recipes</button>
+            <button class="menu-btn" style="touch-action:manipulation;">My Tracking</button>
+            <button class="menu-btn" style="touch-action:manipulation;">My Collection</button>
         </div>
 
         <main class="content-area"></main>
