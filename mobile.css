@@ -27,29 +27,33 @@
         padding: 10px 14px;
     }
 
-    /* Basis: Logo-Text nie abschneiden unter 9 Zeichen */
-    #main-header.scrolled h2,
-    #logo-text {
+    /* NUR der scrolled-Header auf UNTERSEITEN bekommt max-width.
+       #logo-text NICHT selektieren — das würde auch den nicht-scrolled
+       Dashboard-Header treffen und den Namen auf 1 Buchstabe kürzen. */
+    #main-header.scrolled h2 {
         font-size: 0.95rem !important;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 55vw;   /* genug für "GreenBite | Hello, MaxMuster!" */
         flex-shrink: 1;
         min-width: 0;
+        max-width: 52vw;
     }
 
-    /* Unterseiten (tracker/collection/rezepte/details):
-       "| My Tracker" etc. ausblenden — nur dort wo KEIN Name drin ist */
-    #main-header.scrolled .greeting:not(:has(#display-name)) {
-        display: none;
+    /* Dashboard (index.html): Header hat nur Logout daneben
+       → h2 darf fast die ganze Breite haben, niemals abschneiden */
+    #app-section #main-header h2 {
+        max-width: 80vw !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        white-space: nowrap;
     }
 
-    /* Fallback für Browser ohne :has() Support:
-       greeting grundsätzlich ausblenden, außer auf index.html (app-section) */
+    /* Unterseiten: "| My Tracker" etc. ausblenden */
     #main-header.scrolled .greeting {
         display: none;
     }
+    /* Dashboard: Greeting (| Hello, Name) immer anzeigen */
     #app-section #main-header .greeting {
         display: inline !important;
     }
@@ -104,14 +108,5 @@
     /* ── iOS-Zoom-Fix ── */
     input, select, textarea {
         font-size: 16px !important;
-    }
-}
-
-/* index.html Dashboard: nur Logout daneben → h2 darf fast die ganze Breite nutzen */
-@media (max-width: 600px) {
-    #app-section #main-header h2,
-    #app-section #logo-text {
-        max-width: 72vw !important;
-        font-size: 1rem !important;
     }
 }
