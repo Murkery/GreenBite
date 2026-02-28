@@ -328,15 +328,9 @@ function goToDetail(id) {
     window.location.href = "details.html";
 }
 
-// Initialer Start
-renderIngredients();
-
-
 function logout() {
     signOutUser();
 }
-
-// goToDetail bleibt unverändert — selectedRecipeId nur als Übergabe, kein Auth-relevantes Datum
 
 
 // DOM Element für den neuen Button
@@ -359,7 +353,3 @@ selectAllBtn.addEventListener('click', () => {
     updateRecipePlaceholder();
 });
 
-// Ergänzung in deiner vorhandenen renderIngredients Funktion:
-// Damit der Button-Text auch stimmt, wenn man manuell alles abwählt, 
-// kannst du diese Zeile am Ende von updateRecipePlaceholder() einfügen:
-// selectAllBtn.innerText = selectedIngredients.length === ingredients.length ? "Deselect All" : "Select All";
