@@ -165,10 +165,15 @@ let isExpanded = false;
 // Lädt die gespeicherte Auswahl oder startet leer
 let selectedIngredients = JSON.parse(localStorage.getItem('tempSelectedIngredients')) || [];
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderIngredients(); // Zeichnet die Zutaten
+// In-Memory Cache für Favoriten (wird beim Start aus Supabase geladen)
+let cachedFavoriteIds = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    renderIngredients();
+    // Favoriten vorab laden damit die Herzen sofort korrekt angezeigt werden
+    cachedFavoriteIds = await getFavoriteIds();
     if (selectedIngredients.length > 0) {
-        updateRecipePlaceholder(); // Sucht sofort nach Rezepten, ohne dass man klicken muss
+        updateRecipePlaceholder();
     }
 });
 
@@ -273,11 +278,8 @@ function updateRecipePlaceholder() {
         return;
     }
 
-    // Favoriten laden für die Herz-Vorschau
-    const favorites = JSON.parse(localStorage.getItem('myCollection')) || [];
-
     matches.forEach(recipe => {
-        const isFav = favorites.includes(recipe.id);
+        const isFav = cachedFavoriteIds.includes(recipe.id);
         const card = document.createElement('div');
         card.className = 'recipe-card';
         
@@ -305,17 +307,18 @@ function updateRecipePlaceholder() {
     });
 }
 
-// Separate Funktion für das Favoritisieren, um Chaos zu vermeiden
-function handleToggleFav(id) {
-    let favorites = JSON.parse(localStorage.getItem('myCollection')) || [];
-    if (favorites.includes(id)) {
-        favorites = favorites.filter(favId => favId !== id);
+// Herz-Klick → Supabase
+async function handleToggleFav(id) {
+    const isNowFav = await toggleFavorite(id);  // toggleFavorite kommt aus collection.js
+
+    // Cache aktualisieren
+    if (isNowFav) {
+        cachedFavoriteIds.push(id);
     } else {
-        favorites.push(id);
+        cachedFavoriteIds = cachedFavoriteIds.filter(f => f !== id);
     }
-    localStorage.setItem('myCollection', JSON.stringify(favorites));
-    
-    // NUR das Rezept-Grid neu zeichnen
+
+    // Grid neu zeichnen mit aktuellem Cache
     updateRecipePlaceholder();
 }
 
@@ -329,31 +332,12 @@ function goToDetail(id) {
 renderIngredients();
 
 
-// In deine rezepte.js oder direkt in den Script-Teil
 function logout() {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('currentUser');
-    window.location.href = "index.html"; // Jetzt landest du wieder beim Login
+    signOutUser();
 }
 
-// Favoriten aus dem Speicher laden oder leeres Array starten
-let favoriteRecipes = JSON.parse(localStorage.getItem('myCollection')) || [];
+// goToDetail bleibt unverändert — selectedRecipeId nur als Übergabe, kein Auth-relevantes Datum
 
-function toggleFavorite(recipeId) {
-    if (favoriteRecipes.includes(recipeId)) {
-        // Entfernen, wenn schon vorhanden
-        favoriteRecipes = favoriteRecipes.filter(id => id !== recipeId);
-    } else {
-        // Hinzufügen
-        favoriteRecipes.push(recipeId);
-    }
-    
-    // Im LocalStorage speichern
-    localStorage.setItem('myCollection', JSON.stringify(favoriteRecipes));
-    
-    // UI aktualisieren (falls nötig)
-    updateRecipePlaceholder(); 
-}
 
 // DOM Element für den neuen Button
 const selectAllBtn = document.getElementById('select-all-btn');
