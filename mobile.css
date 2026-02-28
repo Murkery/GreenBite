@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════════════════════
+   GREENBITE — mobile.css  (nur Header-Fix)
+   Einbinden in ALLE HTML-Seiten am Ende der CSS-Links:
+   <link rel="stylesheet" href="mobile.css">
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+
+    /* ── HEADER LAYOUT ── */
+    #main-header.scrolled {
+        padding: 10px 16px;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Logo-Text kleiner */
+    #main-header.scrolled h2,
+    #logo-text {
+        font-size: 1rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 52vw;
+    }
+
+    /* "| My Collection" etc. ausblenden damit der Logo nicht abgeschnitten wird */
+    #main-header.scrolled .greeting {
+        display: none;
+    }
+
+    /* Nav-Buttons kleiner & enger */
+    #main-header.scrolled .logout-btn,
+    #main-header.scrolled a.logout-btn {
+        padding: 7px 10px !important;
+        font-size: 0.72rem;
+        margin-right: 4px !important;
+    }
+
+    /* iOS-Zoom-Fix: verhindert Auto-Zoom beim Tippen in Inputs */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
