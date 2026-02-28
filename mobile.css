@@ -1,19 +1,30 @@
 /* ═══════════════════════════════════════════════════════════════
    GREENBITE — mobile.css
-   Einbinden in ALLE HTML-Seiten am Ende der CSS-Links:
-   <link rel="stylesheet" href="mobile.css">
    ═══════════════════════════════════════════════════════════════ */
+
+/* ── NAV-BUTTON: Icon + Text nebeneinander (Desktop) ── */
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
 
 @media (max-width: 600px) {
 
-    /* ── GENERELL: kein horizontales Überlaufen ── */
-    body { overflow-x: hidden; }
+    /* ── Kein horizontales Überlaufen ── */
+    body        { overflow-x: hidden; }
     .page-content { overflow-x: hidden; }
 
     /* ── HEADER ── */
     #main-header.scrolled {
         padding: 10px 14px;
-        gap: 6px;
     }
 
     #main-header.scrolled h2,
@@ -22,7 +33,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 38vw;   /* mehr Platz für die Nav-Buttons */
+        max-width: 40vw;
         flex-shrink: 0;
     }
 
@@ -31,24 +42,33 @@
         display: none;
     }
 
-    /* Nav-Buttons kompakt */
-    #main-header.scrolled .logout-btn,
-    #main-header.scrolled a.logout-btn {
-        padding: 6px 8px !important;
-        font-size: 0.68rem !important;
-        margin-right: 0 !important;
-        white-space: nowrap;
+    /* ── NAV: nur Icons, kein Text — außer Logout & Back ── */
+    .nav-label {
+        display: none;
     }
 
-    /* Nav-Container umbrechen erlauben damit nichts rausfällt */
-    #main-header.scrolled > div {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 5px !important;
-        max-width: 58vw;
+    .nav-btn[title="Logout"] .nav-label,
+    .nav-btn[title="Back"]   .nav-label {
+        display: inline;
     }
 
-    /* ── KALENDER PFEILE (tracker.html) ── */
+    .nav-btn {
+        padding: 8px !important;          /* quadratisch */
+        min-width: 36px;
+        justify-content: center;
+    }
+
+    .nav-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .main-nav {
+        gap: 5px;
+        flex-wrap: nowrap;               /* Icons bleiben in einer Zeile */
+    }
+
+    /* ── KALENDER PFEILE ── */
     .calendar-controls {
         width: 100%;
         box-sizing: border-box;

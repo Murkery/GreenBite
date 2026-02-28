@@ -16,12 +16,27 @@
 <body>
     <header id="main-header" class="scrolled">
         <h2 id="logo-text">GreenBite <span class="greeting">| Recipe Details</span></h2>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <a href="rezepte.html"    class="logout-btn" style="text-decoration:none;">Find Recipes</a>
-            <a href="tracker.html"    class="logout-btn" style="text-decoration:none;">My Tracking</a>
-            <a href="collection.html" class="logout-btn" style="text-decoration:none;">My Collection</a>
-            <a href="index.html"      class="logout-btn" style="text-decoration:none;">Home</a>
-            <a href="javascript:void(0);" onclick="history.back();" class="logout-btn" style="text-decoration:none;">← Back</a>
+        <div class="main-nav">
+            <a href="rezepte.html"    class="logout-btn nav-btn" title="Find Recipes" style="text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                <span class="nav-label">Find Recipes</span>
+            </a>
+            <a href="tracker.html"    class="logout-btn nav-btn" title="My Tracking" style="text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 4-4"/></svg>
+                <span class="nav-label">My Tracking</span>
+            </a>
+            <a href="collection.html" class="logout-btn nav-btn" title="My Collection" style="text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span class="nav-label">My Collection</span>
+            </a>
+            <a href="index.html"      class="logout-btn nav-btn" title="Home" style="text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="javascript:void(0);" onclick="history.back();" class="logout-btn nav-btn" title="Back" style="text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="nav-label">← Back</span>
+            </a>
         </div>
     </header>
 
@@ -67,7 +82,8 @@
     <script src="collection.js"></script>
 
     <script>
-        const recipeId      = localStorage.getItem('selectedRecipeId');
+        // ── Recipe render ──────────────────────────────────────
+        const recipeId     = localStorage.getItem('selectedRecipeId');
         const servingsInput = document.getElementById('servings-input');
         const recipe        = recipes.find(r => r.id === recipeId);
 
@@ -91,6 +107,7 @@
             document.getElementById('recipe-detail-container').innerHTML = '<h1>Recipe not found!</h1>';
         }
 
+        // ── Cooked Today → Supabase tracker ───────────────────
         document.getElementById('cooked-today-btn').addEventListener('click', async function () {
             const recipeName = document.getElementById('det-name').innerText;
             const today      = new Date().toISOString().split('T')[0];
@@ -103,7 +120,8 @@
 
             if (error) { console.error(error); return; }
 
-            const checkIcon   = document.getElementById('check-icon');
+            // Visual feedback
+            const checkIcon  = document.getElementById('check-icon');
             const cookedLabel = document.getElementById('cooked-label');
             const orig        = checkIcon.innerHTML;
 
@@ -118,6 +136,7 @@
             }, 2000);
         });
 
+        // ── Save to Collection → Supabase collection ──────────
         const saveBtn   = document.getElementById('save-collection-btn');
         const heartIcon = document.getElementById('heart-icon');
         const saveLabel = document.getElementById('save-label');
@@ -143,6 +162,7 @@
         });
 
         updateSaveBtn();
+
         function logout() { signOutUser(); }
     </script>
 </body>
