@@ -294,10 +294,13 @@ function renderNutritionAnalysis() {
         });
     });
 
+    // Vergleich gegen die Anzahl tatsächlich getrackter Mahlzeiten — nicht gegen 21
+    // Beispiel: 4 Mahlzeiten eingetragen → Ziel = 4 × Richtwert pro Mahlzeit
+    const mealCount = eatenNames.length;
     const ranked  = Object.keys(PER_MEAL_REQUIREMENTS).map(k => ({
         key:   k,
         label: PER_MEAL_REQUIREMENTS[k].label,
-        pct:   Math.min(Math.round(totals[k] / (PER_MEAL_REQUIREMENTS[k].value * 21) * 100), 999)
+        pct:   Math.min(Math.round(totals[k] / (PER_MEAL_REQUIREMENTS[k].value * mealCount) * 100), 999)
     })).sort((a, b) => a.pct - b.pct);
 
     const deficits = ranked.filter(r => r.pct <  80).slice(0, 3);
