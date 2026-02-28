@@ -221,6 +221,15 @@ input {
     .menu-btn { width: 90%; height: 80px; }
     #main-header { flex-direction: column; gap: 10px; }
     #main-header.scrolled { flex-direction: row; }
+
+    /* Nicht-scrolled Header liegt über den Buttons (z-index 1500)
+       → Touches durchlassen, nur scrolled Header ist interaktiv */
+    #main-header:not(.scrolled) {
+        pointer-events: none;
+    }
+    #main-header.scrolled {
+        pointer-events: auto;
+    }
 }
 
 /* --- HOVER ICONS STYLING --- */
@@ -313,7 +322,3 @@ button,
 #auth-subtitle{
     visibility: hidden;
 }
-
-
-
-
