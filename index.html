@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GreenBite | Recipe Tracker</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <style>
+        /* Password wrapper mit Auge-Button */
+        .pw-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .pw-wrapper input {
+            width: 100%;
+            padding-right: 44px;
+        }
+        .pw-toggle {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .pw-toggle:hover { color: var(--green-accent); }
+    </style>
 </head>
 
 <body>
@@ -21,7 +47,29 @@
         
         <div class="input-group">
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password">
+            <div class="pw-wrapper">
+                <input type="password" id="password" placeholder="Enter your password">
+                <button class="pw-toggle" type="button" onclick="togglePw('password', this)" tabindex="-1">
+                    <svg id="eye-pw" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Nur beim Registrieren sichtbar -->
+        <div class="input-group" id="confirm-group" style="display:none;">
+            <label for="password-confirm">Confirm Password</label>
+            <div class="pw-wrapper">
+                <input type="password" id="password-confirm" placeholder="Repeat your password">
+                <button class="pw-toggle" type="button" onclick="togglePw('password-confirm', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <button id="auth-btn" onclick="handleAuth()">Login</button>
@@ -36,7 +84,12 @@
         <div id="hover-icon-container"></div>
         <header id="main-header">
             <h2 id="logo-text">GreenBite <span class="greeting">| Hello, <span id="display-name">Chef</span>!</span></h2>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <a href="rezepte.html"    class="logout-btn" style="text-decoration:none;">Find Recipes</a>
+                <a href="tracker.html"    class="logout-btn" style="text-decoration:none;">My Tracking</a>
+                <a href="collection.html" class="logout-btn" style="text-decoration:none;">My Collection</a>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
         </header>
 
         <section class="hero-spacer"></section>
@@ -55,5 +108,17 @@
     <script src="supabase-client.js"></script>
     <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Passwort-Sichtbarkeit umschalten
+        function togglePw(inputId, btn) {
+            const inp = document.getElementById(inputId);
+            const isHidden = inp.type === 'password';
+            inp.type = isHidden ? 'text' : 'password';
+            // Auge-Icon tauschen
+            btn.innerHTML = isHidden
+                ? `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+                : `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        }
+    </script>
 </body>
 </html>

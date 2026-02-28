@@ -24,7 +24,7 @@ function showDashboard(name) {
 }
 
 function logout() {
-    signOutUser(); // defined in auth.js — signs out from Supabase
+    signOutUser();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -34,17 +34,32 @@ let isLoginMode = true;
 
 function toggleAuthMode() {
     isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').innerText   = isLoginMode ? 'Welcome Back'  : 'Create Account';
-    document.getElementById('auth-btn').innerText     = isLoginMode ? 'Login'         : 'Sign Up';
-    document.getElementById('toggle-link').innerText  = isLoginMode
+    document.getElementById('auth-title').innerText  = isLoginMode ? 'Welcome Back'  : 'Create Account';
+    document.getElementById('auth-btn').innerText    = isLoginMode ? 'Login'         : 'Sign Up';
+    document.getElementById('toggle-link').innerText = isLoginMode
         ? "Don't have an account? Sign up"
         : 'Already have an account? Login';
+
+    // Bestätigungs-Passwortfeld ein-/ausblenden
+    const confirmGroup = document.getElementById('confirm-group');
+    if (confirmGroup) {
+        confirmGroup.style.display = isLoginMode ? 'none' : 'block';
+        document.getElementById('password-confirm').value = '';
+    }
 }
 
 async function handleAuth() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
     if (!user || !pass) return alert('Please fill in all fields!');
+
+    // Passwort-Bestätigung bei Registrierung prüfen
+    if (!isLoginMode) {
+        const confirmInput = document.getElementById('password-confirm');
+        if (confirmInput && confirmInput.value !== pass) {
+            return alert('Passwords do not match!');
+        }
+    }
 
     const btn = document.getElementById('auth-btn');
     btn.innerText = '...';
@@ -63,13 +78,10 @@ async function handleAuth() {
 }
 
 async function continueAsGuest() {
-    // Use Supabase anonymous sign-in (must be enabled in Supabase Dashboard
-    // → Authentication → Providers → Anonymous sign-ins)
     const { data, error } = await supabaseClient.auth.signInAnonymously();
     if (!error && data?.session) {
         startApp('Guest');
     } else {
-        // Fallback: just show the app without persistence
         startApp('Guest');
     }
 }
@@ -84,7 +96,7 @@ function startApp(name) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 2. CANVAS & PARTICLE SETUP (unchanged)
+// 2. CANVAS & PARTICLE SETUP
 // ─────────────────────────────────────────────────────────────
 const canvas = document.getElementById('bg-canvas');
 const ctx    = canvas.getContext('2d');
@@ -174,7 +186,7 @@ for (let i = 0; i < particleCount; i++) particles.push(new Particle());
 animate();
 
 // ─────────────────────────────────────────────────────────────
-// 3. MENU BUTTONS — hover icons & navigation (unchanged logic)
+// 3. MENU BUTTONS — hover icons & navigation
 // ─────────────────────────────────────────────────────────────
 const buttonIcons = {
     'Find Recipes':  ['<svg viewBox="0 0 24 24"><path d="M12 6v2M9 5l1 3M15 5l-1 3"/></svg>','<svg viewBox="0 0 24 24"><path d="M14 4l-9 9c-1.5 1.5-1.5 3.5 0 5s3.5 1.5 5 0l9-9c1-1 1-2.5 0-3.5s-2.5-1-3.5 0z"/></svg>'],

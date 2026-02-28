@@ -6,6 +6,7 @@
     <title>GreenBite | Recipe Details</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="Unterseite.css">
+    <link rel="stylesheet" href="mobile.css">
     <style>
         .detail-icon-btn { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; font-weight: 600; transition: background 0.3s ease, transform 0.1s ease; }
         .detail-icon-btn:active { transform: scale(0.96); }
@@ -15,7 +16,13 @@
 <body>
     <header id="main-header" class="scrolled">
         <h2 id="logo-text">GreenBite <span class="greeting">| Recipe Details</span></h2>
-        <a href="javascript:void(0);" onclick="history.back();" class="logout-btn" style="text-decoration:none;">Back</a>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <a href="rezepte.html"    class="logout-btn" style="text-decoration:none;">Find Recipes</a>
+            <a href="tracker.html"    class="logout-btn" style="text-decoration:none;">My Tracking</a>
+            <a href="collection.html" class="logout-btn" style="text-decoration:none;">My Collection</a>
+            <a href="index.html"      class="logout-btn" style="text-decoration:none;">Home</a>
+            <a href="javascript:void(0);" onclick="history.back();" class="logout-btn" style="text-decoration:none;">← Back</a>
+        </div>
     </header>
 
     <main class="page-content">
@@ -60,8 +67,7 @@
     <script src="collection.js"></script>
 
     <script>
-        // ── Recipe render ──────────────────────────────────────
-        const recipeId     = localStorage.getItem('selectedRecipeId');
+        const recipeId      = localStorage.getItem('selectedRecipeId');
         const servingsInput = document.getElementById('servings-input');
         const recipe        = recipes.find(r => r.id === recipeId);
 
@@ -85,7 +91,6 @@
             document.getElementById('recipe-detail-container').innerHTML = '<h1>Recipe not found!</h1>';
         }
 
-        // ── Cooked Today → Supabase tracker ───────────────────
         document.getElementById('cooked-today-btn').addEventListener('click', async function () {
             const recipeName = document.getElementById('det-name').innerText;
             const today      = new Date().toISOString().split('T')[0];
@@ -98,8 +103,7 @@
 
             if (error) { console.error(error); return; }
 
-            // Visual feedback
-            const checkIcon  = document.getElementById('check-icon');
+            const checkIcon   = document.getElementById('check-icon');
             const cookedLabel = document.getElementById('cooked-label');
             const orig        = checkIcon.innerHTML;
 
@@ -114,7 +118,6 @@
             }, 2000);
         });
 
-        // ── Save to Collection → Supabase collection ──────────
         const saveBtn   = document.getElementById('save-collection-btn');
         const heartIcon = document.getElementById('heart-icon');
         const saveLabel = document.getElementById('save-label');
@@ -140,7 +143,6 @@
         });
 
         updateSaveBtn();
-
         function logout() { signOutUser(); }
     </script>
 </body>
