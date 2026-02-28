@@ -32,6 +32,8 @@ body {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: -1;
+    pointer-events: none;   /* Android Chrome fix */
+    touch-action: none;
     transition: opacity 0.8s ease;
 }
 
@@ -166,6 +168,8 @@ input {
     justify-content: center;
     min-height: 100vh;
     gap: 30px;
+    position: relative;
+    z-index: 10;            /* Android Chrome fix: above hover-icon-container */
 }
 
 .menu-btn {
