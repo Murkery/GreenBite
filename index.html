@@ -82,7 +82,7 @@
 
     <div id="app-section" style="display: none;">
         <div id="hover-icon-container" style="pointer-events:none;touch-action:none;"></div>
-        <header id="main-header" style="pointer-events:none;">
+        <header id="main-header">
             <h2 id="logo-text">GreenBite <span class="greeting">| Hello, <span id="display-name">Chef</span>!</span></h2>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </header>
@@ -90,9 +90,9 @@
         <section class="hero-spacer"></section>
 
         <div class="action-menu">
-            <button class="menu-btn" style="touch-action:manipulation;">Find Recipes</button>
-            <button class="menu-btn" style="touch-action:manipulation;">My Tracking</button>
-            <button class="menu-btn" style="touch-action:manipulation;">My Collection</button>
+            <a href="rezepte.html"    class="menu-btn menu-link" id="btn-recipes" >Find Recipes</a>
+            <a href="tracker.html"    class="menu-btn menu-link" id="btn-tracking">My Tracking</a>
+            <a href="collection.html" class="menu-btn menu-link" id="btn-collect" >My Collection</a>
         </div>
 
         <main class="content-area"></main>
