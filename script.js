@@ -21,12 +21,6 @@ function showDashboard(name) {
     document.getElementById('app-section').style.display = 'block';
     document.getElementById('display-name').innerText = name;
     if (typeof canvas !== 'undefined') canvas.style.opacity = '0';
-    // Drop header z-index below buttons so it never blocks touches on mobile
-    const header = document.getElementById('main-header');
-    if (header && !header.classList.contains('scrolled')) {
-        header.style.zIndex = '0';
-        header.style.pointerEvents = 'none';
-    }
 }
 
 function logout() {
@@ -99,10 +93,6 @@ function startApp(name) {
     document.body.style.overflow = 'auto';
     canvas.style.opacity = '0';
     particles = [];
-    // Drop header below buttons — buttons have z-index 10
-    const header = document.getElementById('main-header');
-    header.style.zIndex = '0';
-    header.style.pointerEvents = 'none';
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -232,27 +222,15 @@ document.querySelectorAll('.menu-btn').forEach(btn => {
         particles = [];
     });
 
-    btn.addEventListener('click', () => {
-        const text = btn.innerText.trim();
-        if      (text === 'Find Recipes')  window.location.href = 'rezepte.html';
-        else if (text === 'My Collection') window.location.href = 'collection.html';
-        else if (text === 'My Tracking')   window.location.href = 'tracker.html';
-    });
+    // Navigation now handled by href on <a> tags — no click handler needed
 });
 
 window.addEventListener('scroll', () => {
     if (document.getElementById('app-section').style.display === 'none') return;
     const header = document.getElementById('main-header');
     const cur    = window.scrollY;
-    if (cur > 60) {
-        header.classList.add('scrolled');
-        header.style.zIndex = '1500';
-        header.style.pointerEvents = 'auto';
-    } else if (cur < 20) {
-        header.classList.remove('scrolled');
-        header.style.zIndex = '0';
-        header.style.pointerEvents = 'none';
-    }
+    if (cur > 60)  header.classList.add('scrolled');
+    else if (cur < 20) header.classList.remove('scrolled');
     if (!isThrottled) {
         if (cur > 80 && cur < window.innerHeight / 2 && cur > lastScrollY) {
             isThrottled = true;
