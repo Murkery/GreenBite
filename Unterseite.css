@@ -163,13 +163,13 @@
     border: 1px solid var(--green-primary);
     border-radius: 12px;
     overflow: hidden;
-    transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+    box-shadow: 0 0 0px rgba(64, 145, 108, 0);
+    transition: border-color 0.4s ease, box-shadow 0.5s ease;
 }
 
 .recipe-card:hover {
     border-color: var(--green-accent);
-    background: rgba(27, 67, 50, 0.6);
-    box-shadow: 0 0 30px rgba(64, 145, 108, 0.25), inset 0 0 20px rgba(64, 145, 108, 0.05);
+    box-shadow: 0 0 22px rgba(64, 145, 108, 0.5);
 }
 
 .card-image {
