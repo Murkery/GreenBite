@@ -163,13 +163,13 @@
     border: 1px solid var(--green-primary);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 0 0px rgba(64, 145, 108, 0);
-    transition: border-color 0.4s ease, box-shadow 0.5s ease;
+    box-shadow: 0 0 8px rgba(64, 145, 108, 0.12);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .recipe-card:hover {
     border-color: var(--green-accent);
-    box-shadow: 0 0 22px rgba(64, 145, 108, 0.5);
+    box-shadow: 0 0 40px rgba(64, 145, 108, 0.55);
 }
 
 .card-image {
@@ -493,4 +493,10 @@
     margin-top: 3rem;   /* Zusätzlicher Fokus-Abstand, wenn eingeblendet */
     border-top: 1px solid #333; /* Optionale Trennlinie */
     padding-top: 2rem;
+}
+/* ── Liked Glow — bleibt nach dem Herz-Klick ── */
+.recipe-card.liked-glow {
+    border-color: var(--green-accent);
+    box-shadow: 0 0 30px rgba(64, 145, 108, 0.6), 0 0 60px rgba(64, 145, 108, 0.2);
+    transition: border-color 0.4s ease, box-shadow 0.6s ease;
 }
