@@ -30,6 +30,33 @@
             transition: color 0.2s;
         }
         .pw-toggle:hover { color: var(--green-accent); }
+        /* Scroll hint */
+        #scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+        #scroll-hint.visible {
+            opacity: 1;
+        }
+        #scroll-hint svg {
+            animation: bounce 1.2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(6px); }
+        }
     </style>
 </head>
 
@@ -87,7 +114,12 @@
             <button class="logout-btn" onclick="logout()">Logout</button>
         </header>
 
-        <section class="hero-spacer"></section>
+        <section class="hero-spacer" style="position:relative;">
+            <div id="scroll-hint">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                scroll down
+            </div>
+        </section>
 
         <div class="action-menu">
             <a href="rezepte.html"    class="menu-btn menu-link" id="btn-recipes" >Find Recipes</a>
@@ -114,6 +146,42 @@
                 ? `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
                 : `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
         }
+    </script>
+    <script>
+        // Scroll-hint: erscheint nach 5s Inaktivität, verschwindet beim Scrollen
+        let scrollHintTimer = null;
+        const scrollHint = document.getElementById('scroll-hint');
+
+        function resetScrollHint() {
+            scrollHint.classList.remove('visible');
+            clearTimeout(scrollHintTimer);
+            // Nur anzeigen wenn App-Section sichtbar und noch nicht runtergeschrollt
+            if (document.getElementById('app-section').style.display !== 'none' && window.scrollY < 50) {
+                scrollHintTimer = setTimeout(() => {
+                    if (window.scrollY < 50) scrollHint.classList.add('visible');
+                }, 5000);
+            }
+        }
+
+        // Startet wenn Dashboard gezeigt wird
+        const _origShowDashboard = window.showDashboard;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hook into startApp / showDashboard via MutationObserver on app-section
+            const appSection = document.getElementById('app-section');
+            new MutationObserver(() => {
+                if (appSection.style.display !== 'none') resetScrollHint();
+            }).observe(appSection, { attributes: true, attributeFilter: ['style'] });
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                scrollHint.classList.remove('visible');
+                clearTimeout(scrollHintTimer);
+            }
+        });
+        ['touchstart','mousemove','keydown'].forEach(e =>
+            document.addEventListener(e, resetScrollHint, { passive: true })
+        );
     </script>
 </body>
 </html>
