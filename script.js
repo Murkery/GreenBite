@@ -21,6 +21,12 @@ function showDashboard(name) {
     document.getElementById('app-section').style.display = 'block';
     document.getElementById('display-name').innerText = name;
     if (typeof canvas !== 'undefined') canvas.style.opacity = '0';
+    // Drop header z-index below buttons so it never blocks touches on mobile
+    const header = document.getElementById('main-header');
+    if (header && !header.classList.contains('scrolled')) {
+        header.style.zIndex = '0';
+        header.style.pointerEvents = 'none';
+    }
 }
 
 function logout() {
@@ -93,6 +99,10 @@ function startApp(name) {
     document.body.style.overflow = 'auto';
     canvas.style.opacity = '0';
     particles = [];
+    // Drop header below buttons — buttons have z-index 10
+    const header = document.getElementById('main-header');
+    header.style.zIndex = '0';
+    header.style.pointerEvents = 'none';
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -234,8 +244,15 @@ window.addEventListener('scroll', () => {
     if (document.getElementById('app-section').style.display === 'none') return;
     const header = document.getElementById('main-header');
     const cur    = window.scrollY;
-    if (cur > 60)  header.classList.add('scrolled');
-    else if (cur < 20) header.classList.remove('scrolled');
+    if (cur > 60) {
+        header.classList.add('scrolled');
+        header.style.zIndex = '1500';
+        header.style.pointerEvents = 'auto';
+    } else if (cur < 20) {
+        header.classList.remove('scrolled');
+        header.style.zIndex = '0';
+        header.style.pointerEvents = 'none';
+    }
     if (!isThrottled) {
         if (cur > 80 && cur < window.innerHeight / 2 && cur > lastScrollY) {
             isThrottled = true;
