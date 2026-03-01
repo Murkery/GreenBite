@@ -497,7 +497,8 @@
 /* ── Liked Glow — bleibt nach dem Herz-Klick ── */
 .recipe-card.liked-glow {
     border-color: var(--green-accent);
-    box-shadow: 0 0 30px rgba(64, 145, 108, 0.55);
+    box-shadow: 0 0 28px rgba(64, 145, 108, 0.55);
     /* NO own transition — uses the base card transition so glow grows smoothly */
 }
+
 
