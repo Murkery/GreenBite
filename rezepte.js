@@ -282,6 +282,7 @@ function updateRecipePlaceholder() {
         const isFav = cachedFavoriteIds.includes(recipe.id);
         const card = document.createElement('div');
         card.className = 'recipe-card';
+        card.dataset.recipeId = recipe.id;
         
         // WICHTIG: stopPropagation verhindert, dass der Klick auf das Herz 
         // andere Events auslöst, die das Duplizieren verursachen könnten
@@ -309,7 +310,7 @@ function updateRecipePlaceholder() {
 
 // Herz-Klick → Supabase
 async function handleToggleFav(id) {
-    const isNowFav = await toggleFavorite(id);  // toggleFavorite kommt aus collection.js
+    const isNowFav = await toggleFavorite(id);
 
     // Cache aktualisieren
     if (isNowFav) {
@@ -318,7 +319,16 @@ async function handleToggleFav(id) {
         cachedFavoriteIds = cachedFavoriteIds.filter(f => f !== id);
     }
 
-    // Grid neu zeichnen mit aktuellem Cache
+    // Glow auf der Karte ein/ausschalten
+    const card = document.querySelector(`.recipe-card[data-recipe-id="${id}"]`);
+    if (card) {
+        if (isNowFav) {
+            card.classList.add('liked-glow');
+        } else {
+            card.classList.remove('liked-glow');
+        }
+    }
+
     updateRecipePlaceholder();
 }
 
@@ -352,4 +362,3 @@ selectAllBtn.addEventListener('click', () => {
     // Rezepte basierend auf der neuen Auswahl suchen
     updateRecipePlaceholder();
 });
-
