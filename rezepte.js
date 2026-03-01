@@ -281,7 +281,7 @@ function updateRecipePlaceholder() {
     matches.forEach(recipe => {
         const isFav = cachedFavoriteIds.includes(recipe.id);
         const card = document.createElement('div');
-        card.className = 'recipe-card';
+        card.className = isFav ? 'recipe-card liked-glow' : 'recipe-card';
         card.dataset.recipeId = recipe.id;
         
         // WICHTIG: stopPropagation verhindert, dass der Klick auf das Herz 
@@ -319,17 +319,16 @@ async function handleToggleFav(id) {
         cachedFavoriteIds = cachedFavoriteIds.filter(f => f !== id);
     }
 
-    // Glow auf der Karte ein/ausschalten
+    // Karte direkt updaten — KEIN re-render, kein Glow-Flash
     const card = document.querySelector(`.recipe-card[data-recipe-id="${id}"]`);
     if (card) {
-        if (isNowFav) {
-            card.classList.add('liked-glow');
-        } else {
-            card.classList.remove('liked-glow');
-        }
+        // Glow togglen
+        card.classList.toggle('liked-glow', isNowFav);
+        // Herz-Icon tauschen ohne die Karte neu zu rendern
+        const favBtn = card.querySelector('.fav-btn-dezent');
+        if (favBtn) favBtn.innerHTML = isNowFav ? icons.heartFilled : icons.heart;
     }
-
-    updateRecipePlaceholder();
+    // Kein updateRecipePlaceholder() — würde Grid zerstören und Glow resetten
 }
 
 // Funktion für den Klick (später für die Unterseite)
