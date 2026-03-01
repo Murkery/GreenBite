@@ -167,8 +167,8 @@
 }
 
 .recipe-card:hover {
-    transform: translateY(-5px);
     border-color: var(--green-accent);
+    box-shadow: 0 0 18px rgba(64, 145, 108, 0.35);
 }
 
 .card-image {
