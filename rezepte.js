@@ -175,6 +175,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (selectedIngredients.length > 0) {
         updateRecipePlaceholder();
     }
+    // Button-Text korrekt setzen falls beim Zurücknavigieren alle ausgewählt sind
+    if (selectedIngredients.length >= ingredients.length && ingredients.length > 0) {
+        selectAllBtn.innerText = "Deselect All";
+    } else {
+        selectAllBtn.innerText = "Select All";
+    }
 });
 
 
