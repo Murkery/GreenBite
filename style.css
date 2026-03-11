@@ -207,6 +207,14 @@ input {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Responsive Anpassung für Tablets */
+@media (max-width: 1024px) {
+    #main-header { flex-wrap: nowrap; }
+    #main-header.scrolled { flex-wrap: nowrap; flex-direction: row; align-items: center; }
+    #main-header.scrolled h2 { font-size: 1.1rem; white-space: nowrap; }
+    .logout-btn { padding: 8px 14px; font-size: 0.85rem; white-space: nowrap; }
+}
+
 /* Responsive Anpassung für kleinere Bildschirme */
 @media (max-width: 600px) {
     #main-header h2 { font-size: 2rem; }
