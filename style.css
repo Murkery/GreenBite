@@ -109,13 +109,12 @@ input {
     
     /* Extrem smoothe Kurve */
     transition: 
-        top 1.1s cubic-bezier(0.19, 1, 0.22, 1),
-        left 1.1s cubic-bezier(0.19, 1, 0.22, 1),
         transform 1.1s cubic-bezier(0.19, 1, 0.22, 1),
         width 1.1s cubic-bezier(0.19, 1, 0.22, 1),
         border-color 0.8s ease,
         background 0.8s ease,
         padding 0.8s ease;
+    will-change: transform;
     z-index: 1500;
 }
 
