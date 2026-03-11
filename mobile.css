@@ -40,13 +40,15 @@
         max-width: 52vw;
     }
 
-    /* Dashboard (index.html): Header hat nur Logout daneben
-       → h2 darf fast die ganze Breite haben, niemals abschneiden */
-    #app-section #main-header h2 {
-        max-width: 80vw !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
-        white-space: nowrap;
+    /* Dashboard (index.html): h2 zentriert zwischen Logo-Rand und Logout-Button */
+    #app-section #main-header.scrolled h2 {
+        flex: 1 !important;
+        text-align: center !important;
+        max-width: none !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        padding: 0 8px;
     }
 
     /* Unterseiten: "| My Tracker" etc. ausblenden */
