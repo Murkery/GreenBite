@@ -279,7 +279,7 @@ function renderNutritionAnalysis() {
 
     if (eatenNames.length === 0) {
         container.innerHTML = `<div class="nutrition-empty">
-            <p>No meals tracked in the last 7 days yet.<br>Start cooking and the analysis will appear here! 🥦</p>
+            <p>No meals tracked in the last 7 days yet.<br>Start cooking and the analysis will appear here!</p>
         </div>`;
         return;
     }
